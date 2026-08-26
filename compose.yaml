@@ -1,0 +1,30 @@
+services:
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: practica
+      MARIADB_USER: practica
+      MARIADB_PASSWORD: practica
+      MARIADB_ROOT_PASSWORD: root-local-only
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  app:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_NAME: practica
+      DB_USER: practica
+      DB_PASSWORD: practica
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  db-data:
