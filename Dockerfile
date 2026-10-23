@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.3.36-apache
 RUN docker-php-ext-install pdo_mysql
 COPY public/ /var/www/html/
 COPY src/ /var/www/src/
